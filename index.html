@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Recommended Products & Deals</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen text-gray-800 flex flex-col justify-between">
+
+  <!-- Main Container -->
+  <div>
+    <!-- Header -->
+    <header class="max-w-4xl mx-auto pt-8 pb-4 text-center px-4">
+      <h1 class="text-2xl sm:text-3xl font-bold tracking-tight">Recommended Products</h1>
+      <p class="text-sm text-gray-500 mt-1">Direct links to tested gadgets & items</p>
+      
+      <!-- Search Input -->
+      <div class="mt-6 max-w-md mx-auto">
+        <input
+          type="text"
+          id="searchInput"
+          placeholder="Search by name or #ID (e.g. 955)..."
+          class="w-full border border-gray-300 rounded-lg px-4 py-2.5 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+          onkeyup="filterProducts()"
+        />
+      </div>
+    </header>
+
+    <!-- Product Grid View -->
+    <main class="max-w-6xl mx-auto px-4 py-6">
+      <div id="loading" class="text-center py-16 text-gray-500">
+        <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 mb-2"></div>
+        <p>Loading catalog...</p>
+      </div>
+      <div id="productGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 hidden"></div>
+    </main>
+  </div>
+
+  <!-- Amazon Associates Compliance Disclosure -->
+  <footer class="text-center py-8 px-4 text-xs text-gray-500 border-t mt-12 bg-white">
+    <p>As an Amazon Associate, I earn from qualifying purchases.</p>
+  </footer>
+
+  <script>
+    let allProducts = [];
+
+    async function fetchProducts() {
+      const loadingEl = document.getElementById("loading");
+      const gridEl = document.getElementById("productGrid");
+
+      try {
+        // Appends timestamp to prevent browser from caching outdated products.json
+        const res = await fetch(`./products.json?t=${new Date().getTime()}`);
+        if (!res.ok) throw new Error("Could not load products.json");
+
+        allProducts = await res.json();
+        
+        // Ensure products are sorted in descending order by ID (#955 before #954)
+        allProducts.sort((a, b) => parseInt(b.id || 0) - parseInt(a.id || 0));
+
+        loadingEl.classList.add("hidden");
+        gridEl.classList.remove("hidden");
+        renderProducts(allProducts);
+      } catch (err) {
+        loadingEl.innerHTML = `<p class="text-red-500">Failed to load product catalog. Please make sure products.json exists.</p>`;
+        console.error("Fetch Error:", err);
+      }
+    }
+
+    function renderProducts(items) {
+      const grid = document.getElementById("productGrid");
+      
+      if (!items || items.length === 0) {
+        grid.innerHTML = `<p class="col-span-full text-center text-gray-500 py-12">No products matched your search.</p>`;
+        return;
+      }
+
+      grid.innerHTML = items.map(p => `
+        <a 
+          href="${p.link}" 
+          target="_blank" 
+          rel="noopener sponsored" 
+          class="bg-white border rounded-lg overflow-hidden shadow-sm hover:shadow-md transition flex flex-col group"
+        >
+          <div class="relative w-full pb-[100%] bg-white border-b">
+            <!-- Product ID Badge -->
+            <span class="absolute top-2 left-2 bg-yellow-400 text-black text-xs font-bold px-2 py-0.5 rounded shadow-sm z-10">
+              #${p.id}
+            </span>
+            <!-- Image with fallback and referrer protection -->
+            <img 
+              src="${p.image}" 
+              alt="${p.title}" 
+              loading="lazy" 
+              referrerpolicy="no-referrer"
+              class="absolute inset-0 w-full h-full object-contain p-4 group-hover:scale-105 transition duration-200" 
+              onerror="this.src='https://via.placeholder.com/300?text=No+Image'"
+            />
+          </div>
+          <!-- Title Banner -->
+          <div class="bg-black text-white text-center py-2.5 px-2 text-xs md:text-sm font-black tracking-wide uppercase truncate">
+            ${p.title}
+          </div>
+        </a>
+      `).join("");
+    }
+
+    function filterProducts() {
+      const query = document.getElementById("searchInput").value.toLowerCase().trim();
+      const filtered = allProducts.filter(p => 
+        (p.title && p.title.toLowerCase().includes(query)) || 
+        (p.id && p.id.toString().includes(query))
+      );
+      renderProducts(filtered);
+    }
+
+    // Initialize
+    fetchProducts();
+  </script>
+</body>
+</html>
