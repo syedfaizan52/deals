@@ -3,24 +3,28 @@
     "id": 1,
     "title": "Boat Bassheads 100 Wired Earphones",
     "image": "https://m.media-amazon.com/images/I/513ugd16C6L._SX522_.jpg",
-    "link": "https://www.amazon.in/dp/B071Z8M4KX](https://www.amazon.in/dp/B071Z8M4KX"
+    "link": "https://www.amazon.in/dp/B071Z8M4KX](https://www.amazon.in/dp/B071Z8M4KX",
+    "category": "electronics, audio"
   },
   {
     "id": 2,
     "title": "Echo Dot 4th Gen Smart Speaker",
     "image": "https://m.media-amazon.com/images/I/61KIy6gX-CL._SL1000_.jpg",
-    "link": "https://www.amazon.in/dp/B084J4MZK6](https://www.amazon.in/dp/B084J4MZK6"
+    "link": "https://www.amazon.in/dp/B084J4MZK6](https://www.amazon.in/dp/B084J4MZK6",
+    "category": "electronics, home, audio"
   },
   {
     "id": 3,
     "title": "Portronics Portable Laptop Stand",
     "image": "https://m.media-amazon.com/images/I/71Zf9uUp+GL._SL1500_.jpg",
-    "link": "https://www.amazon.in/dp/B08CY2WDFN](https://www.amazon.in/dp/B08CY2WDFN"
+    "link": "https://www.amazon.in/dp/B08CY2WDFN](https://www.amazon.in/dp/B08CY2WDFN",
+    "category": "electronics, desk, gadgets"
   },
   {
     "id": 4,
     "title": "Pigeon Electric Kettle 1.5 Litre",
     "image": "https://m.media-amazon.com/images/I/31K0ey0Hg2L._SY300_SX300_QL70_FMwebp_.jpg",
-    "link": "https://www.amazon.in/dp/B07WMS7TWB](https://www.amazon.in/dp/B07WMS7TWB"
+    "link": "https://www.amazon.in/dp/B07WMS7TWB](https://www.amazon.in/dp/B07WMS7TWB",
+    "category": "home, kitchen, appliances"
   }
 ]
