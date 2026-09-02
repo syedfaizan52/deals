@@ -2,8 +2,8 @@ name: Sync Google Sheet to JSON
 
 on:
   schedule:
-    - cron: '0 * * * *'  # Runs automatically every hour
-  workflow_dispatch:      # Allows manual trigger button in GitHub UI
+    - cron: '0 * * * *'
+  workflow_dispatch:
 
 permissions:
   contents: write
@@ -28,12 +28,16 @@ jobs:
           reader = csv.DictReader(lines)
           items = []
           for row in reader:
-              if row.get('id') and row.get('title'):
+              # Normalize keys to lowercase and strip spaces
+              clean_row = {k.strip().lower(): v.strip() for k, v in row.items() if k}
+              
+              if clean_row.get('id') and clean_row.get('title'):
                   items.append({
-                      'id': int(row['id']) if row['id'].strip().isdigit() else row['id'].strip(),
-                      'title': row['title'].strip(),
-                      'image': row.get('image', '').strip(),
-                      'link': row.get('link', '').strip()
+                      'id': int(clean_row['id']) if clean_row['id'].isdigit() else clean_row['id'],
+                      'title': clean_row.get('title', ''),
+                      'image': clean_row.get('image', ''),
+                      'link': clean_row.get('link', ''),
+                      'category': clean_row.get('category', '')
                   })
 
           with open('products.json', 'w', encoding='utf-8') as f:
@@ -45,4 +49,4 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git add products.json
-          git diff --quiet && git diff --staged --quiet || (git commit -m "Auto-sync products from Google Sheet" && git push)
+          git diff --quiet && git diff --staged --quiet || (git commit -m "Auto-sync products and categories from Google Sheet" && git push)
