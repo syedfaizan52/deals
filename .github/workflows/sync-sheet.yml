@@ -1,0 +1,48 @@
+name: Sync Google Sheet to JSON
+
+on:
+  schedule:
+    - cron: '0 * * * *'  # Runs automatically every hour
+  workflow_dispatch:      # Allows manual trigger button in GitHub UI
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Fetch Google Sheet CSV and convert to products.json
+        run: |
+          python -c "
+          import urllib.request, csv, json
+
+          url = 'https://docs.google.com/spreadsheets/d/1HFF7L8mdGi-gqaZ-5PXxXdhs2FFAForU1VWTYtYXFkw/gviz/tq?tqx=out:csv'
+          req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0'})
+          response = urllib.request.urlopen(req)
+          lines = [line.decode('utf-8') for line in response.readlines()]
+
+          reader = csv.DictReader(lines)
+          items = []
+          for row in reader:
+              if row.get('id') and row.get('title'):
+                  items.append({
+                      'id': int(row['id']) if row['id'].strip().isdigit() else row['id'].strip(),
+                      'title': row['title'].strip(),
+                      'image': row.get('image', '').strip(),
+                      'link': row.get('link', '').strip()
+                  })
+
+          with open('products.json', 'w', encoding='utf-8') as f:
+              json.dump(items, f, indent=2, ensure_ascii=False)
+          "
+
+      - name: Commit and Push Changes
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add products.json
+          git diff --quiet && git diff --staged --quiet || (git commit -m "Auto-sync products from Google Sheet" && git push)
