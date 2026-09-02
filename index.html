@@ -4,8 +4,15 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>R Facts — Storefront</title>
+  
+  <meta name="description" content="Tested tech gadgets, kitchen appliances, and budget gear curated by R Facts." />
+  <meta property="og:title" content="R Facts — Recommended & Tested Gear" />
+  <meta property="og:description" content="Find direct links to products reviewed and tested in our videos." />
+  <meta property="og:type" content="website" />
+
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
+  
   <!-- Google Fonts: Plus Jakarta Sans -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -37,7 +44,7 @@
 <body class="bg-[#0b0f19] text-slate-100 min-h-screen flex flex-col justify-between selection:bg-amber-400 selection:text-black font-sans antialiased">
 
   <div>
-    <!-- Sticky Navigation & Creator Header -->
+    <!-- Sticky Navigation & Header -->
     <header class="sticky top-0 z-40 backdrop-blur-md bg-[#0b0f19]/90 border-b border-slate-800/80 px-4 py-3">
       <div class="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3">
         
@@ -79,7 +86,7 @@
       </div>
     </header>
 
-    <!-- Interactive Filter & Search Bar Area -->
+    <!-- Filter & Search Toolbar -->
     <section class="max-w-6xl mx-auto px-4 pt-6 pb-4">
       <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
         
@@ -102,7 +109,7 @@
           >✕</button>
         </div>
 
-        <!-- Dynamic Category Filter Container -->
+        <!-- Dynamic Multi-Category Filter Container -->
         <div id="categoryContainer" class="flex flex-wrap items-center gap-1.5"></div>
       </div>
       
@@ -126,7 +133,7 @@
     </main>
   </div>
 
-  <!-- Amazon Associates Compliance -->
+  <!-- Amazon Associates Compliance Footer -->
   <footer class="border-t border-slate-800/80 bg-[#070a11] py-6 text-center px-4">
     <p class="text-xs text-slate-500">
       As an Amazon Associate, I earn from qualifying purchases.
@@ -152,12 +159,22 @@
         grid.classList.remove("hidden");
 
         renderCategoryPills();
+        
+        // Auto-filter if a user arrives via ?search=955 or ?id=955
+        const urlParams = new URLSearchParams(window.location.search);
+        const queryParam = urlParams.get('search') || urlParams.get('id');
+        if (queryParam) {
+          const searchInput = document.getElementById("searchInput");
+          searchInput.value = queryParam;
+          document.getElementById("clearBtn").classList.remove("hidden");
+        }
+
         applyFilters();
       } catch (err) {
         skeletons.innerHTML = `
           <div class="col-span-full text-center py-16 bg-slate-900 border border-slate-800 rounded-2xl">
             <p class="text-amber-400 font-semibold text-sm">Failed to load product catalog.</p>
-            <p class="text-xs text-slate-500 mt-1">Make sure products.json is committed in your repository.</p>
+            <p class="text-xs text-slate-500 mt-1">Make sure products.json exists in your repository.</p>
           </div>
         `;
         console.error("Fetch error:", err);
@@ -167,13 +184,17 @@
     function renderCategoryPills() {
       const container = document.getElementById("categoryContainer");
       
-      const categories = ['all', ...new Set(
-        allProducts
-          .map(p => (p.category || '').trim().toLowerCase())
+      // Extracts and flattens all comma-separated categories into distinct unique tags
+      const rawCategories = allProducts.flatMap(p => 
+        (p.category || '')
+          .split(',')
+          .map(c => c.trim().toLowerCase())
           .filter(Boolean)
-      )];
+      );
 
-      container.innerHTML = categories.map(cat => {
+      const uniqueCategories = ['all', ...new Set(rawCategories)];
+
+      container.innerHTML = uniqueCategories.map(cat => {
         const isSelected = cat === currentCategory;
         const label = cat === 'all' 
           ? 'All' 
@@ -280,8 +301,14 @@
       const query = document.getElementById("searchInput").value.toLowerCase().trim();
 
       const filtered = allProducts.filter(p => {
-        const itemCat = (p.category || '').toLowerCase().trim();
-        const matchesCategory = currentCategory === 'all' || itemCat === currentCategory;
+        // Split comma-separated categories for each product
+        const itemCategories = (p.category || '')
+          .toLowerCase()
+          .split(',')
+          .map(c => c.trim());
+
+        const matchesCategory = currentCategory === 'all' || itemCategories.includes(currentCategory);
+        
         const matchesSearch = !query || 
           (p.title && p.title.toLowerCase().includes(query)) || 
           (p.id && p.id.toString().includes(query));
