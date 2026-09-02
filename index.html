@@ -3,43 +3,110 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Recommended Products & Deals</title>
+  <title>R Facts - Recommended Products</title>
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(14px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    .card-animate {
+      animation: fadeInUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+  </style>
 </head>
-<body class="bg-gray-100 min-h-screen text-gray-800 flex flex-col justify-between">
+<body class="bg-[#f8f9fa] min-h-screen text-gray-900 flex flex-col justify-between selection:bg-yellow-400 selection:text-black">
 
-  <!-- Main Container -->
   <div>
-    <!-- Header -->
-    <header class="max-w-4xl mx-auto pt-8 pb-4 text-center px-4">
-      <h1 class="text-2xl sm:text-3xl font-bold tracking-tight">Recommended Products</h1>
-      <p class="text-sm text-gray-500 mt-1">Direct links to tested gadgets & items</p>
-      
-      <!-- Search Input -->
-      <div class="mt-6 max-w-md mx-auto">
-        <input
-          type="text"
-          id="searchInput"
-          placeholder="Search by name or #ID (e.g. 955)..."
-          class="w-full border border-gray-300 rounded-lg px-4 py-2.5 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
-          onkeyup="filterProducts()"
-        />
+    <!-- Minimalist Channel Header -->
+    <header class="max-w-3xl mx-auto px-4 pt-10 pb-6 text-center">
+      <!-- Channel Logo / Avatar -->
+      <div class="flex justify-center mb-3">
+        <div class="w-20 h-20 rounded-full bg-[#fde047] flex items-center justify-center text-black font-black text-3xl shadow-sm ring-4 ring-white border border-gray-200 hover:scale-105 transition duration-300">
+          R
+        </div>
+      </div>
+
+      <!-- Channel Details -->
+      <h1 class="text-2xl font-extrabold tracking-tight text-gray-900">R Facts</h1>
+      <p class="text-sm text-gray-500 font-medium mt-0.5">@rfactts</p>
+
+      <!-- SimpleGhar-style Action Banner -->
+      <div class="mt-5 max-w-md mx-auto">
+        <a 
+          href="https://www.youtube.com/@rfactts" 
+          target="_blank" 
+          rel="noopener"
+          class="group block bg-[#9ed5f8] hover:bg-[#8acbf7] text-gray-900 text-sm font-semibold py-3 px-5 rounded-2xl shadow-sm transition-all duration-200 hover:shadow-md hover:-translate-y-0.5"
+        >
+          <span>Try Our Recommended & Tested Products</span>
+          <span class="block text-red-600 font-bold text-xs mt-0.5 group-hover:underline">Visit Channel &gt;</span>
+        </a>
+      </div>
+
+      <!-- Search Section -->
+      <div class="mt-8 max-w-lg mx-auto relative">
+        <div class="relative flex items-center">
+          <span class="absolute left-4 text-gray-400">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+            </svg>
+          </span>
+          <input
+            type="text"
+            id="searchInput"
+            placeholder="Search by product name or #ID (e.g. 955)..."
+            class="w-full bg-white border border-gray-200 text-gray-800 rounded-full pl-11 pr-10 py-3 text-sm shadow-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent focus:shadow-md"
+            oninput="handleSearch()"
+          />
+          <button 
+            id="clearBtn"
+            onclick="clearSearch()"
+            class="hidden absolute right-3.5 text-gray-400 hover:text-gray-600 p-1 text-xs"
+          >
+            ✕
+          </button>
+        </div>
+        <p id="itemCount" class="text-xs text-gray-500 mt-2 font-medium tracking-wide"></p>
       </div>
     </header>
 
-    <!-- Product Grid View -->
-    <main class="max-w-6xl mx-auto px-4 py-6">
-      <div id="loading" class="text-center py-16 text-gray-500">
-        <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 mb-2"></div>
-        <p>Loading catalog...</p>
+    <!-- Product Grid -->
+    <main class="max-w-6xl mx-auto px-4 pb-12">
+      <!-- Loading Skeleton Cards -->
+      <div id="loadingSkeletons" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 sm:gap-6">
+        <div class="bg-white border border-gray-100 rounded-2xl p-4 shadow-sm animate-pulse flex flex-col items-center">
+          <div class="w-full pb-[100%] bg-gray-200 rounded-xl mb-3"></div>
+          <div class="h-4 bg-gray-200 rounded w-3/4"></div>
+        </div>
+        <div class="bg-white border border-gray-100 rounded-2xl p-4 shadow-sm animate-pulse flex flex-col items-center">
+          <div class="w-full pb-[100%] bg-gray-200 rounded-xl mb-3"></div>
+          <div class="h-4 bg-gray-200 rounded w-3/4"></div>
+        </div>
+        <div class="bg-white border border-gray-100 rounded-2xl p-4 shadow-sm animate-pulse flex flex-col items-center">
+          <div class="w-full pb-[100%] bg-gray-200 rounded-xl mb-3"></div>
+          <div class="h-4 bg-gray-200 rounded w-3/4"></div>
+        </div>
+        <div class="bg-white border border-gray-100 rounded-2xl p-4 shadow-sm animate-pulse flex flex-col items-center">
+          <div class="w-full pb-[100%] bg-gray-200 rounded-xl mb-3"></div>
+          <div class="h-4 bg-gray-200 rounded w-3/4"></div>
+        </div>
       </div>
-      <div id="productGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 hidden"></div>
+
+      <!-- Dynamic Product Grid -->
+      <div id="productGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 sm:gap-6 hidden"></div>
     </main>
   </div>
 
-  <!-- Amazon Associates Compliance Disclosure -->
-  <footer class="text-center py-8 px-4 text-xs text-gray-500 border-t mt-12 bg-white">
+  <!-- Amazon Associates Compliance -->
+  <footer class="text-center py-8 px-4 text-xs text-gray-500 border-t border-gray-200 bg-white">
     <p>As an Amazon Associate, I earn from qualifying purchases.</p>
   </footer>
 
@@ -47,68 +114,86 @@
     let allProducts = [];
 
     async function fetchProducts() {
-      const loadingEl = document.getElementById("loading");
-      const gridEl = document.getElementById("productGrid");
+      const skeletons = document.getElementById("loadingSkeletons");
+      const grid = document.getElementById("productGrid");
 
       try {
-        // Appends timestamp to prevent browser from caching outdated products.json
         const res = await fetch(`./products.json?t=${new Date().getTime()}`);
         if (!res.ok) throw new Error("Could not load products.json");
 
         allProducts = await res.json();
-        
-        // Ensure products are sorted in descending order by ID (#955 before #954)
         allProducts.sort((a, b) => parseInt(b.id || 0) - parseInt(a.id || 0));
 
-        loadingEl.classList.add("hidden");
-        gridEl.classList.remove("hidden");
+        skeletons.classList.add("hidden");
+        grid.classList.remove("hidden");
         renderProducts(allProducts);
       } catch (err) {
-        loadingEl.innerHTML = `<p class="text-red-500">Failed to load product catalog. Please make sure products.json exists.</p>`;
+        skeletons.innerHTML = `
+          <div class="col-span-full text-center py-12">
+            <p class="text-red-500 font-medium">Failed to load product catalog.</p>
+            <p class="text-xs text-gray-400 mt-1">Check that products.json exists in your repository.</p>
+          </div>
+        `;
         console.error("Fetch Error:", err);
       }
     }
 
     function renderProducts(items) {
       const grid = document.getElementById("productGrid");
+      const countEl = document.getElementById("itemCount");
       
+      countEl.innerText = `${items.length} ${items.length === 1 ? 'item' : 'items'} available`;
+
       if (!items || items.length === 0) {
-        grid.innerHTML = `<p class="col-span-full text-center text-gray-500 py-12">No products matched your search.</p>`;
+        grid.innerHTML = `
+          <div class="col-span-full text-center py-16">
+            <p class="text-gray-500 font-semibold text-base">No matching products found</p>
+            <p class="text-xs text-gray-400 mt-1">Try another search term or product #ID</p>
+          </div>
+        `;
         return;
       }
 
-      grid.innerHTML = items.map(p => `
+      grid.innerHTML = items.map((p, index) => `
         <a 
           href="${p.link}" 
           target="_blank" 
           rel="noopener sponsored" 
-          class="bg-white border rounded-lg overflow-hidden shadow-sm hover:shadow-md transition flex flex-col group"
+          style="animation-delay: ${Math.min(index * 40, 400)}ms"
+          class="card-animate bg-white border border-gray-200/80 rounded-2xl overflow-hidden shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 flex flex-col group relative"
         >
-          <div class="relative w-full pb-[100%] bg-white border-b">
-            <!-- Product ID Badge -->
-            <span class="absolute top-2 left-2 bg-yellow-400 text-black text-xs font-bold px-2 py-0.5 rounded shadow-sm z-10">
-              #${p.id}
-            </span>
-            <!-- Image with fallback and referrer protection -->
+          <!-- Product Badge -->
+          <span class="absolute top-2.5 left-2.5 bg-yellow-400 text-black text-[11px] font-black px-2 py-0.5 rounded-md shadow-sm z-10 tracking-tight">
+            #${p.id}
+          </span>
+
+          <!-- Image Container -->
+          <div class="relative w-full pb-[100%] bg-white overflow-hidden">
             <img 
               src="${p.image}" 
               alt="${p.title}" 
               loading="lazy" 
               referrerpolicy="no-referrer"
-              class="absolute inset-0 w-full h-full object-contain p-4 group-hover:scale-105 transition duration-200" 
+              class="absolute inset-0 w-full h-full object-contain p-4 group-hover:scale-105 transition-transform duration-300 ease-out" 
               onerror="this.src='https://via.placeholder.com/300?text=No+Image'"
             />
           </div>
-          <!-- Title Banner -->
-          <div class="bg-black text-white text-center py-2.5 px-2 text-xs md:text-sm font-black tracking-wide uppercase truncate">
+
+          <!-- Bottom Label -->
+          <div class="bg-black text-white text-center py-2.5 px-3 text-xs md:text-sm font-black tracking-wider uppercase truncate border-t border-gray-900 group-hover:bg-[#1a1a1a] transition-colors">
             ${p.title}
           </div>
         </a>
       `).join("");
     }
 
-    function filterProducts() {
-      const query = document.getElementById("searchInput").value.toLowerCase().trim();
+    function handleSearch() {
+      const input = document.getElementById("searchInput");
+      const clearBtn = document.getElementById("clearBtn");
+      const query = input.value.toLowerCase().trim();
+
+      clearBtn.classList.toggle("hidden", query.length === 0);
+
       const filtered = allProducts.filter(p => 
         (p.title && p.title.toLowerCase().includes(query)) || 
         (p.id && p.id.toString().includes(query))
@@ -116,7 +201,13 @@
       renderProducts(filtered);
     }
 
-    // Initialize
+    function clearSearch() {
+      const input = document.getElementById("searchInput");
+      input.value = "";
+      handleSearch();
+      input.focus();
+    }
+
     fetchProducts();
   </script>
 </body>
